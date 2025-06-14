@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { CloudSun, CloudRain, Sun, RefreshCw } from 'lucide-react';
+import { CloudSun, CloudRain, Sun, RefreshCw, Droplets, Wind } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const WeatherWidget: React.FC = () => {
@@ -54,11 +54,11 @@ export const WeatherWidget: React.FC = () => {
   const getWeatherIcon = (condition: string) => {
     switch (condition.toLowerCase()) {
       case 'sunny':
-        return <Sun className="w-8 h-8 text-yellow-500" />;
+        return <Sun className="w-8 h-8 text-yellow-400" />;
       case 'rainy':
-        return <CloudRain className="w-8 h-8 text-blue-500" />;
+        return <CloudRain className="w-8 h-8 text-blue-400" />;
       default:
-        return <CloudSun className="w-8 h-8 text-blue-400" />;
+        return <CloudSun className="w-8 h-8 text-blue-300" />;
     }
   };
 
@@ -69,28 +69,18 @@ export const WeatherWidget: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="widget-card h-full">
-        <div className="widget-header">
-          <h3 className="font-semibold">Weather</h3>
-          <RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" />
-        </div>
-        <div className="widget-content">
-          <div className="animate-pulse">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-muted rounded-full"></div>
-              <div className="flex-1">
-                <div className="h-8 bg-muted rounded mb-2"></div>
-                <div className="h-4 bg-muted rounded w-2/3"></div>
-              </div>
-            </div>
-            <div className="grid grid-cols-5 gap-2">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="text-center">
-                  <div className="h-4 bg-muted rounded mb-2"></div>
-                  <div className="w-8 h-8 bg-muted rounded-full mx-auto mb-2"></div>
-                  <div className="h-3 bg-muted rounded"></div>
-                </div>
-              ))}
+      <div className="h-full rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-xl">Weather</h3>
+            <RefreshCw className="w-5 h-5 animate-spin text-white/80" />
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="animate-pulse text-center">
+              <div className="w-16 h-16 bg-white/20 rounded-full mx-auto mb-4"></div>
+              <div className="h-6 bg-white/20 rounded mb-2 w-24 mx-auto"></div>
+              <div className="h-4 bg-white/20 rounded w-16 mx-auto"></div>
             </div>
           </div>
         </div>
@@ -100,26 +90,29 @@ export const WeatherWidget: React.FC = () => {
 
   if (error) {
     return (
-      <div className="widget-card h-full">
-        <div className="widget-header">
-          <h3 className="font-semibold">Weather</h3>
-          <button 
-            onClick={handleRefresh}
-            className="p-1 hover:bg-accent rounded transition-colors"
-            title="Retry"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-        </div>
-        <div className="widget-content flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-muted-foreground mb-4">{error}</p>
+      <div className="h-full rounded-xl bg-gradient-to-br from-red-500 via-red-600 to-pink-700 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-xl">Weather</h3>
             <button 
               onClick={handleRefresh}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              className="p-1 hover:bg-white/20 rounded-lg transition-colors"
+              title="Retry"
             >
-              Try Again
+              <RefreshCw className="w-5 h-5" />
             </button>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <div className="text-center">
+              <p className="text-white/90 mb-4">{error}</p>
+              <button 
+                onClick={handleRefresh}
+                className="px-4 py-2 bg-white/20 rounded-lg hover:bg-white/30 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -128,69 +121,86 @@ export const WeatherWidget: React.FC = () => {
 
   if (!weather) {
     return (
-      <div className="widget-card h-full">
-        <div className="widget-header">
-          <h3 className="font-semibold">Weather</h3>
-        </div>
-        <div className="widget-content flex items-center justify-center">
-          <p className="text-muted-foreground">No weather data available</p>
+      <div className="h-full rounded-xl bg-gradient-to-br from-gray-500 via-gray-600 to-slate-700 text-white shadow-xl overflow-hidden relative">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 p-6 h-full flex flex-col">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold text-xl">Weather</h3>
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <p className="text-white/80">No weather data available</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="widget-card h-full">
-      <div className="widget-header">
-        <h3 className="font-semibold">Weather</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{weather.current.location}</span>
-          <button 
-            onClick={handleRefresh}
-            className="p-1 hover:bg-accent rounded transition-colors"
-            title="Refresh weather"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
+    <div className="h-full rounded-xl bg-gradient-to-br from-blue-500 via-blue-600 to-indigo-700 text-white shadow-xl overflow-hidden relative hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+      {/* Decorative elements */}
+      <div className="absolute inset-0 bg-black/10"></div>
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+      
+      <div className="relative z-10 p-6 h-full flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-bold text-xl">Weather</h3>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-white/80">{weather.current.location}</span>
+            <button 
+              onClick={handleRefresh}
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors group"
+              title="Refresh weather"
+            >
+              <RefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="widget-content">
+
         {/* Current Weather */}
-        <div className="flex items-center gap-4 mb-6">
-          {getWeatherIcon(weather.current.condition)}
+        <div className="flex items-center gap-6 mb-8">
+          <div className="flex-shrink-0">
+            {getWeatherIcon(weather.current.condition)}
+          </div>
           <div className="flex-1">
-            <div className="text-3xl font-bold">{weather.current.temp}°F</div>
-            <div className="text-muted-foreground">{weather.current.condition}</div>
+            <div className="text-4xl font-bold mb-1">{weather.current.temp}°F</div>
+            <div className="text-white/90 text-lg">{weather.current.condition}</div>
           </div>
         </div>
 
         {/* Additional Info */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="text-center p-3 bg-muted/50 rounded-lg">
-            <div className="text-sm text-muted-foreground">Humidity</div>
-            <div className="font-semibold">{weather.current.humidity}%</div>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-white/15 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-white/20 transition-colors">
+            <Droplets className="w-5 h-5 mx-auto mb-2 text-blue-200" />
+            <div className="text-sm text-white/80">Humidity</div>
+            <div className="font-bold text-lg">{weather.current.humidity}%</div>
           </div>
-          <div className="text-center p-3 bg-muted/50 rounded-lg">
-            <div className="text-sm text-muted-foreground">Wind</div>
-            <div className="font-semibold">{weather.current.windSpeed} mph</div>
+          <div className="bg-white/15 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-white/20 transition-colors">
+            <Wind className="w-5 h-5 mx-auto mb-2 text-blue-200" />
+            <div className="text-sm text-white/80">Wind</div>
+            <div className="font-bold text-lg">{weather.current.windSpeed} mph</div>
           </div>
         </div>
 
         {/* 5-Day Forecast */}
-        <div>
-          <h4 className="font-medium mb-3">5-Day Forecast</h4>
+        <div className="flex-1">
+          <h4 className="font-semibold mb-4 text-white/90">5-Day Forecast</h4>
           <div className="grid grid-cols-5 gap-2">
             {weather.forecast.map((day, index) => (
-              <div key={index} className="text-center p-2 rounded-lg hover:bg-muted/30 transition-colors">
-                <div className="text-xs text-muted-foreground mb-2">
+              <div 
+                key={index} 
+                className="text-center p-3 rounded-lg bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:scale-105"
+              >
+                <div className="text-xs text-white/80 mb-2 font-medium">
                   {day.date}
                 </div>
-                <div className="flex justify-center mb-2">
+                <div className="flex justify-center mb-3 scale-75">
                   {getWeatherIcon(day.condition)}
                 </div>
                 <div className="text-xs">
-                  <div className="font-medium">{day.high}°</div>
-                  <div className="text-muted-foreground">{day.low}°</div>
+                  <div className="font-bold text-white">{day.high}°</div>
+                  <div className="text-white/70">{day.low}°</div>
                 </div>
               </div>
             ))}
