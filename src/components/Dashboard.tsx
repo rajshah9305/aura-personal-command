@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Header } from './layout/Header';
 import { Sidebar } from './layout/Sidebar';
@@ -36,7 +35,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const pageTransition = {
-    type: "tween",
+    type: "tween" as const,
     ease: "anticipate",
     duration: 0.5
   };
@@ -58,7 +57,7 @@ export const Dashboard: React.FC = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 100
       }
     }
