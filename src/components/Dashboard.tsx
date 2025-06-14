@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Header } from './layout/Header';
 import { Sidebar } from './layout/Sidebar';
 import { WeatherWidget } from './widgets/WeatherWidget';
@@ -10,291 +11,99 @@ import { AnalyticsWidget } from './widgets/AnalyticsWidget';
 import { SettingsPage } from './pages/SettingsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { useDashboard } from '../context/DashboardContext';
-import { motion, AnimatePresence } from 'framer-motion';
 
 export const Dashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
-  const [isLoaded, setIsLoaded] = useState(false);
   const { widgets } = useDashboard();
-
-  useEffect(() => {
-    // Add a subtle loading delay for better perceived performance
-    const timer = setTimeout(() => setIsLoaded(true), 300);
-    return () => clearTimeout(timer);
-  }, []);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
   };
 
-  const pageVariants = {
-    initial: { opacity: 0, y: 20 },
-    in: { opacity: 1, y: 0 },
-    out: { opacity: 0, y: -20 }
-  };
-
-  const pageTransition = {
-    type: "tween" as const,
-    ease: "anticipate",
-    duration: 0.5
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.1,
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100
-      }
-    }
-  };
-
   const renderContent = () => {
-    const contentMap = {
-      'settings': <SettingsPage />,
-      'profile': <ProfilePage />,
-      'tasks': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-between"
-          >
-            <div>
-              <h2 className="text-4xl font-bold text-gradient mb-2">Task Management</h2>
-              <p className="text-muted-foreground text-lg">Organize and track your productivity</p>
-            </div>
-            <motion.div
-              whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
-            >
-              <div className="w-6 h-6 rounded-full bg-primary/20"></div>
-            </motion.div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+    switch (activeSection) {
+      case 'settings':
+        return <SettingsPage />;
+      case 'profile':
+        return <ProfilePage />;
+      case 'tasks':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Task Management</h2>
             <TaskWidget />
-          </motion.div>
-        </div>
-      ),
-      'calendar': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center justify-between"
-          >
-            <div>
-              <h2 className="text-4xl font-bold text-gradient mb-2">Calendar</h2>
-              <p className="text-muted-foreground text-lg">Plan your schedule and events</p>
-            </div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+          </div>
+        );
+      case 'calendar':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Calendar</h2>
             <CalendarWidget />
-          </motion.div>
-        </div>
-      ),
-      'weather': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold text-gradient mb-2">Weather Forecast</h2>
-            <p className="text-muted-foreground text-lg">Stay updated with weather conditions</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+          </div>
+        );
+      case 'weather':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Weather Forecast</h2>
             <WeatherWidget />
-          </motion.div>
-        </div>
-      ),
-      'stocks': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold text-gradient mb-2">Stock Market</h2>
-            <p className="text-muted-foreground text-lg">Track your investments and market trends</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+          </div>
+        );
+      case 'stocks':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Stock Market</h2>
             <StockWidget />
-          </motion.div>
-        </div>
-      ),
-      'news': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold text-gradient mb-2">Latest News</h2>
-            <p className="text-muted-foreground text-lg">Stay informed with current events</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+          </div>
+        );
+      case 'news':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Latest News</h2>
             <NewsWidget />
-          </motion.div>
-        </div>
-      ),
-      'analytics': (
-        <div className="p-8 space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-4xl font-bold text-gradient mb-2">Analytics Dashboard</h2>
-            <p className="text-muted-foreground text-lg">Insights and performance metrics</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-          >
+          </div>
+        );
+      case 'analytics':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Analytics Dashboard</h2>
             <AnalyticsWidget />
-          </motion.div>
-        </div>
-      ),
-      'dashboard': (
-        <div className="p-8">
-          <motion.div
-            initial={{ opacity: 0, y: -30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="mb-12 text-center"
-          >
-            <motion.h2
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-5xl font-bold text-gradient mb-4"
-            >
-              Welcome to Your Dashboard
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-xl text-muted-foreground max-w-2xl mx-auto"
-            >
-              Your personalized command center for productivity, insights, and seamless workflow management.
-            </motion.p>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-6">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-foreground mb-2">Welcome to Your Dashboard</h2>
+              <p className="text-muted-foreground">Here's an overview of your personal information and widgets.</p>
+            </div>
             
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.6 }}
-              className="mt-8 flex justify-center space-x-4"
-            >
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                <span className="text-sm font-medium">All systems operational</span>
-              </div>
-              <div className="flex items-center space-x-2 px-4 py-2 rounded-full bg-secondary/50 border border-border">
-                <span className="text-sm font-medium">{widgets.filter(w => w.visible).length} active widgets</span>
-              </div>
-            </motion.div>
-          </motion.div>
-          
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid-layout"
-          >
-            {widgets.filter(widget => widget.visible).map((widget, index) => {
-              const WidgetComponent = {
-                'weather': WeatherWidget,
-                'tasks': TaskWidget,
-                'news': NewsWidget,
-                'stocks': StockWidget,
-                'calendar': CalendarWidget,
-                'analytics': AnalyticsWidget,
-              }[widget.type];
-
-              return WidgetComponent ? (
-                <motion.div
-                  key={widget.id}
-                  variants={itemVariants}
-                  whileHover={{ 
-                    scale: 1.02,
-                    transition: { duration: 0.2 }
-                  }}
-                  className="h-full"
-                >
-                  <WidgetComponent />
-                </motion.div>
-              ) : null;
-            })}
-          </motion.div>
-        </div>
-      )
-    };
-
-    return contentMap[activeSection] || contentMap['dashboard'];
+            <div className="grid-layout">
+              {widgets.filter(widget => widget.visible).map((widget) => {
+                switch (widget.type) {
+                  case 'weather':
+                    return <WeatherWidget key={widget.id} />;
+                  case 'tasks':
+                    return <TaskWidget key={widget.id} />;
+                  case 'news':
+                    return <NewsWidget key={widget.id} />;
+                  case 'stocks':
+                    return <StockWidget key={widget.id} />;
+                  case 'calendar':
+                    return <CalendarWidget key={widget.id} />;
+                  case 'analytics':
+                    return <AnalyticsWidget key={widget.id} />;
+                  default:
+                    return null;
+                }
+              })}
+            </div>
+          </div>
+        );
+    }
   };
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="text-center space-y-4"
-        >
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full mx-auto"
-          />
-          <p className="text-muted-foreground font-medium">Loading your dashboard...</p>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background to-muted/20">
+    <div className="min-h-screen flex w-full bg-background">
       <Sidebar
         collapsed={sidebarCollapsed}
         activeSection={activeSection}
@@ -306,18 +115,7 @@ export const Dashboard: React.FC = () => {
           onToggleSidebar={toggleSidebar}
         />
         <main className="flex-1 overflow-auto">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection}
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={pageVariants}
-              transition={pageTransition}
-            >
-              {renderContent()}
-            </motion.div>
-          </AnimatePresence>
+          {renderContent()}
         </main>
       </div>
     </div>
