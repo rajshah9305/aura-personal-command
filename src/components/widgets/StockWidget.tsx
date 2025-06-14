@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { trending-up as TrendingUp, trending-down as TrendingDown, search as Search } from 'lucide-react';
+import { TrendingUp, TrendingDown, Search } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const StockWidget: React.FC = () => {

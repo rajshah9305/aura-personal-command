@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { 
-  layout-dashboard as LayoutDashboard,
-  calendar as Calendar,
-  list as List,
-  trending-up as TrendingUp,
-  cloud-sun as CloudSun,
-  file-text as FileText,
-  settings as Settings,
-  user as User
+  LayoutDashboard,
+  Calendar,
+  List,
+  TrendingUp,
+  CloudSun,
+  FileText,
+  Settings,
+  User
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 

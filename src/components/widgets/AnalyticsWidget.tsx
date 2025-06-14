@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { trending-up as TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const AnalyticsWidget: React.FC = () => {

@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { calendar as Calendar, chevron-left as ChevronLeft, chevron-right as ChevronRight } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Event {
   id: string;

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { list as List, chevron-down as ChevronDown, x as X } from 'lucide-react';
+import { List, ChevronDown, X } from 'lucide-react';
 import { useDashboard, Task } from '../../context/DashboardContext';
 
 export const TaskWidget: React.FC = () => {

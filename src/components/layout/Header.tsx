@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import { 
-  search as Search,
-  settings as Settings,
-  user as User,
-  sun as Sun,
-  layout-dashboard as LayoutDashboard,
-  chevron-left as ChevronLeft,
-  chevron-right as ChevronRight
+  Search,
+  Settings,
+  User,
+  Sun,
+  LayoutDashboard,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 

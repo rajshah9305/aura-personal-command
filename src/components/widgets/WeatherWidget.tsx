@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { cloud-sun as CloudSun, cloud-rain as CloudRain, sun as Sun } from 'lucide-react';
+import { CloudSun, CloudRain, Sun } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const WeatherWidget: React.FC = () => {

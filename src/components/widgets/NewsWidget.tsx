@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { file-text as FileText, search as Search } from 'lucide-react';
+import { FileText, Search } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 const categories = ['general', 'technology', 'business', 'sports', 'entertainment', 'health'];
