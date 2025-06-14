@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Sidebar } from './layout/Sidebar';
 import { Header } from './layout/Header';
@@ -13,7 +12,8 @@ import { FullScreenTasks } from './pages/FullScreenTasks';
 import { FullScreenNews } from './pages/FullScreenNews';
 import { FullScreenStocks } from './pages/FullScreenStocks';
 import { FullScreenAnalytics } from './pages/FullScreenAnalytics';
-import { ProfileSettings } from './pages/ProfileSettings';
+import { Profile } from './pages/Profile';
+import { Settings } from './pages/Settings';
 import { useDashboard } from '../context/DashboardContext';
 import { TrendingUp, CheckCircle, Clock, Activity } from 'lucide-react';
 
@@ -54,8 +54,9 @@ export const Dashboard: React.FC = () => {
       case 'analytics':
         return <FullScreenAnalytics />;
       case 'profile':
+        return <Profile />;
       case 'settings':
-        return <ProfileSettings />;
+        return <Settings />;
       default:
         return null;
     }
