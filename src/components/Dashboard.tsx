@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './layout/Sidebar';
 import { Header } from './layout/Header';
 import { WeatherWidget } from './widgets/WeatherWidget';
@@ -15,12 +16,29 @@ import { FullScreenAnalytics } from './pages/FullScreenAnalytics';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { useDashboard } from '../context/DashboardContext';
-import { TrendingUp, CheckCircle, Clock, Activity } from 'lucide-react';
+import { TrendingUp, CheckCircle, Clock, Activity, Sparkles } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const { widgets, tasks, userSettings } = useDashboard();
+
+  // Handle navigation events from header
+  useEffect(() => {
+    const handleProfileNavigation = () => setActiveSection('profile');
+    const handleSettingsNavigation = () => setActiveSection('settings');
+    const handleDashboardNavigation = () => setActiveSection('dashboard');
+
+    window.addEventListener('navigate-to-profile', handleProfileNavigation);
+    window.addEventListener('navigate-to-settings', handleSettingsNavigation);
+    window.addEventListener('navigate-to-dashboard', handleDashboardNavigation);
+
+    return () => {
+      window.removeEventListener('navigate-to-profile', handleProfileNavigation);
+      window.removeEventListener('navigate-to-settings', handleSettingsNavigation);
+      window.removeEventListener('navigate-to-dashboard', handleDashboardNavigation);
+    };
+  }, []);
 
   const getWidgetComponent = (type: string) => {
     switch (type) {
@@ -78,8 +96,19 @@ export const Dashboard: React.FC = () => {
     return 'Good evening';
   };
 
+  const getMotivationalMessage = () => {
+    const messages = [
+      "You're doing amazing! Every small step counts towards your bigger goals.",
+      "Keep up the fantastic work! Your productivity is inspiring.",
+      "Today is full of possibilities. Let's make it count!",
+      "Your dedication is paying off. Stay focused and keep going!",
+      "Progress, not perfection. You're on the right track!"
+    ];
+    return messages[Math.floor(Math.random() * messages.length)];
+  };
+
   return (
-    <div className="min-h-screen bg-background flex w-full">
+    <div className="min-h-screen bg-background flex w-full overflow-hidden">
       {/* Sidebar */}
       <Sidebar 
         collapsed={sidebarCollapsed}
@@ -96,17 +125,18 @@ export const Dashboard: React.FC = () => {
         />
 
         {/* Dashboard Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-y-auto">
           {activeSection === 'dashboard' && (
             <div className="space-y-6 animate-fade-in">
               {/* Welcome Section */}
               <div className="mb-8">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                      {getGreeting()}, {userSettings.name.split(' ')[0]}! 👋
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent flex items-center gap-2">
+                      {getGreeting()}, {userSettings.name.split(' ')[0]}! 
+                      <Sparkles className="w-8 h-8 text-primary animate-pulse" />
                     </h2>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-muted-foreground mt-1 text-lg">
                       Ready to make today productive? Here's your dashboard overview.
                     </p>
                   </div>
@@ -114,9 +144,9 @@ export const Dashboard: React.FC = () => {
                     <div className="text-right">
                       <div className="text-sm text-muted-foreground">Today's Progress</div>
                       <div className="flex items-center gap-2">
-                        <div className="w-20 bg-muted rounded-full h-2">
+                        <div className="w-20 bg-muted rounded-full h-2 overflow-hidden">
                           <div 
-                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-1000 ease-out"
                             style={{ width: `${completionRate}%` }}
                           ></div>
                         </div>
@@ -129,7 +159,7 @@ export const Dashboard: React.FC = () => {
 
               {/* Enhanced Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-blue-100 text-sm">Active Widgets</p>
@@ -138,11 +168,11 @@ export const Dashboard: React.FC = () => {
                     <Activity className="w-8 h-8 text-blue-200" />
                   </div>
                   <div className="mt-2 text-xs text-blue-100">
-                    All systems running
+                    All systems running smoothly
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-green-100 text-sm">Completed Tasks</p>
@@ -155,7 +185,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-orange-100 text-sm">Pending Tasks</p>
@@ -164,11 +194,11 @@ export const Dashboard: React.FC = () => {
                     <Clock className="w-8 h-8 text-orange-200" />
                   </div>
                   <div className="mt-2 text-xs text-orange-100">
-                    {pendingTasks > 0 ? 'Focus time!' : 'All caught up!'}
+                    {pendingTasks > 0 ? 'Focus time!' : 'All caught up! 🎉'}
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-1">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-purple-100 text-sm">Productivity</p>
@@ -177,7 +207,7 @@ export const Dashboard: React.FC = () => {
                     <TrendingUp className="w-8 h-8 text-purple-200" />
                   </div>
                   <div className="mt-2 text-xs text-purple-100">
-                    Above average
+                    Above average performance
                   </div>
                 </div>
               </div>
@@ -187,7 +217,7 @@ export const Dashboard: React.FC = () => {
                 {visibleWidgets.map((widget, index) => (
                   <div
                     key={widget.id}
-                    className={`${getGridSpan(widget.size)} min-h-[400px] animate-fade-in hover:scale-[1.02] transition-transform duration-300`}
+                    className={`${getGridSpan(widget.size)} min-h-[400px] animate-fade-in hover:scale-[1.02] transition-all duration-300 hover:shadow-lg`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
                     {getWidgetComponent(widget.type)}
@@ -196,10 +226,14 @@ export const Dashboard: React.FC = () => {
               </div>
 
               {/* Motivational Footer */}
-              <div className="mt-8 text-center p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20">
-                <h3 className="text-lg font-semibold mb-2">Keep up the great work!</h3>
+              <div className="mt-8 text-center p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20 hover:border-primary/40 transition-all duration-300">
+                <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  Keep up the great work!
+                  <Sparkles className="w-5 h-5 text-primary" />
+                </h3>
                 <p className="text-muted-foreground">
-                  You're doing amazing. Every small step counts towards your bigger goals.
+                  {getMotivationalMessage()}
                 </p>
               </div>
             </div>
