@@ -3,11 +3,17 @@ import React, { useState } from 'react';
 import { Sidebar } from './layout/Sidebar';
 import { Header } from './layout/Header';
 import { WeatherWidget } from './widgets/WeatherWidget';
-import { TaskWidget } from './widgets/TaskWidget';
+import { EnhancedTaskWidget } from './widgets/EnhancedTaskWidget';
 import { NewsWidget } from './widgets/NewsWidget';
 import { StockWidget } from './widgets/StockWidget';
-import { CalendarWidget } from './widgets/CalendarWidget';
+import { EnhancedCalendarWidget } from './widgets/EnhancedCalendarWidget';
 import { AnalyticsWidget } from './widgets/AnalyticsWidget';
+import { FullScreenCalendar } from './pages/FullScreenCalendar';
+import { FullScreenTasks } from './pages/FullScreenTasks';
+import { FullScreenNews } from './pages/FullScreenNews';
+import { FullScreenStocks } from './pages/FullScreenStocks';
+import { FullScreenAnalytics } from './pages/FullScreenAnalytics';
+import { ProfileSettings } from './pages/ProfileSettings';
 import { useDashboard } from '../context/DashboardContext';
 import { TrendingUp, CheckCircle, Clock, Activity } from 'lucide-react';
 
@@ -21,15 +27,35 @@ export const Dashboard: React.FC = () => {
       case 'weather':
         return <WeatherWidget />;
       case 'tasks':
-        return <TaskWidget />;
+        return <EnhancedTaskWidget />;
       case 'news':
         return <NewsWidget />;
       case 'stocks':
         return <StockWidget />;
       case 'calendar':
-        return <CalendarWidget />;
+        return <EnhancedCalendarWidget />;
       case 'analytics':
         return <AnalyticsWidget />;
+      default:
+        return null;
+    }
+  };
+
+  const getFullScreenComponent = () => {
+    switch (activeSection) {
+      case 'calendar':
+        return <FullScreenCalendar />;
+      case 'tasks':
+        return <FullScreenTasks />;
+      case 'news':
+        return <FullScreenNews />;
+      case 'stocks':
+        return <FullScreenStocks />;
+      case 'analytics':
+        return <FullScreenAnalytics />;
+      case 'profile':
+      case 'settings':
+        return <ProfileSettings />;
       default:
         return null;
     }
@@ -178,31 +204,10 @@ export const Dashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Individual Widget Views */}
+          {/* Full Screen Views */}
           {activeSection !== 'dashboard' && (
-            <div className="max-w-4xl mx-auto animate-fade-in">
-              <div className="mb-6">
-                <h2 className="text-3xl font-bold mb-2 capitalize bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {activeSection}
-                </h2>
-                <p className="text-muted-foreground">
-                  Detailed view of your {activeSection} data and insights.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {visibleWidgets
-                  .filter(widget => widget.type === activeSection || activeSection === 'dashboard')
-                  .map((widget, index) => (
-                    <div 
-                      key={widget.id} 
-                      className="min-h-[400px] animate-fade-in hover:scale-[1.02] transition-transform duration-300"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      {getWidgetComponent(widget.type)}
-                    </div>
-                  ))}
-              </div>
+            <div className="h-full animate-fade-in">
+              {getFullScreenComponent()}
             </div>
           )}
         </main>
