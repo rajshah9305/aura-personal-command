@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Header } from './layout/Header';
 import { Sidebar } from './layout/Sidebar';
@@ -37,7 +36,7 @@ export const Dashboard: React.FC = () => {
 
   const pageTransition = {
     type: "tween" as const,
-    ease: [0.6, 0.01, -0.05, 0.95] as const,
+    ease: "anticipate",
     duration: 0.5
   };
 
