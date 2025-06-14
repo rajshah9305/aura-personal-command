@@ -1,210 +1,121 @@
 
 import React, { useState } from 'react';
-import { Sidebar } from './layout/Sidebar';
 import { Header } from './layout/Header';
+import { Sidebar } from './layout/Sidebar';
 import { WeatherWidget } from './widgets/WeatherWidget';
 import { TaskWidget } from './widgets/TaskWidget';
 import { NewsWidget } from './widgets/NewsWidget';
 import { StockWidget } from './widgets/StockWidget';
 import { CalendarWidget } from './widgets/CalendarWidget';
 import { AnalyticsWidget } from './widgets/AnalyticsWidget';
+import { SettingsPage } from './pages/SettingsPage';
+import { ProfilePage } from './pages/ProfilePage';
 import { useDashboard } from '../context/DashboardContext';
-import { TrendingUp, CheckCircle, Clock, Activity } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
-  const { widgets, tasks, userSettings } = useDashboard();
+  const { widgets } = useDashboard();
 
-  const getWidgetComponent = (type: string) => {
-    switch (type) {
-      case 'weather':
-        return <WeatherWidget />;
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case 'settings':
+        return <SettingsPage />;
+      case 'profile':
+        return <ProfilePage />;
       case 'tasks':
-        return <TaskWidget />;
-      case 'news':
-        return <NewsWidget />;
-      case 'stocks':
-        return <StockWidget />;
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Task Management</h2>
+            <TaskWidget />
+          </div>
+        );
       case 'calendar':
-        return <CalendarWidget />;
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Calendar</h2>
+            <CalendarWidget />
+          </div>
+        );
+      case 'weather':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Weather Forecast</h2>
+            <WeatherWidget />
+          </div>
+        );
+      case 'stocks':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Stock Market</h2>
+            <StockWidget />
+          </div>
+        );
+      case 'news':
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Latest News</h2>
+            <NewsWidget />
+          </div>
+        );
       case 'analytics':
-        return <AnalyticsWidget />;
+        return (
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-6">Analytics Dashboard</h2>
+            <AnalyticsWidget />
+          </div>
+        );
       default:
-        return null;
+        return (
+          <div className="p-6">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-foreground mb-2">Welcome to Your Dashboard</h2>
+              <p className="text-muted-foreground">Here's an overview of your personal information and widgets.</p>
+            </div>
+            
+            <div className="grid-layout">
+              {widgets.filter(widget => widget.visible).map((widget) => {
+                switch (widget.type) {
+                  case 'weather':
+                    return <WeatherWidget key={widget.id} />;
+                  case 'tasks':
+                    return <TaskWidget key={widget.id} />;
+                  case 'news':
+                    return <NewsWidget key={widget.id} />;
+                  case 'stocks':
+                    return <StockWidget key={widget.id} />;
+                  case 'calendar':
+                    return <CalendarWidget key={widget.id} />;
+                  case 'analytics':
+                    return <AnalyticsWidget key={widget.id} />;
+                  default:
+                    return null;
+                }
+              })}
+            </div>
+          </div>
+        );
     }
   };
 
-  const getGridSpan = (size: { width: number; height: number }) => {
-    return `col-span-1 md:col-span-${Math.min(size.width, 2)} lg:col-span-${Math.min(size.width, 3)} xl:col-span-${Math.min(size.width, 4)}`;
-  };
-
-  const visibleWidgets = widgets.filter(widget => widget.visible);
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const pendingTasks = tasks.filter(task => !task.completed).length;
-  const completionRate = tasks.length > 0 ? Math.round((completedTasks / tasks.length) * 100) : 0;
-
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
-  };
-
   return (
-    <div className="min-h-screen bg-background flex w-full">
-      {/* Sidebar */}
-      <Sidebar 
+    <div className="min-h-screen flex w-full bg-background">
+      <Sidebar
         collapsed={sidebarCollapsed}
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
-        <Header 
+      <div className="flex-1 flex flex-col">
+        <Header
           sidebarCollapsed={sidebarCollapsed}
-          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+          onToggleSidebar={toggleSidebar}
         />
-
-        {/* Dashboard Content */}
-        <main className="flex-1 p-6">
-          {activeSection === 'dashboard' && (
-            <div className="space-y-6 animate-fade-in">
-              {/* Welcome Section */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                      {getGreeting()}, {userSettings.name.split(' ')[0]}! 👋
-                    </h2>
-                    <p className="text-muted-foreground mt-1">
-                      Ready to make today productive? Here's your dashboard overview.
-                    </p>
-                  </div>
-                  <div className="hidden md:flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="text-sm text-muted-foreground">Today's Progress</div>
-                      <div className="flex items-center gap-2">
-                        <div className="w-20 bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${completionRate}%` }}
-                          ></div>
-                        </div>
-                        <span className="text-sm font-medium">{completionRate}%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Enhanced Quick Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-blue-100 text-sm">Active Widgets</p>
-                      <p className="text-2xl font-bold">{visibleWidgets.length}</p>
-                    </div>
-                    <Activity className="w-8 h-8 text-blue-200" />
-                  </div>
-                  <div className="mt-2 text-xs text-blue-100">
-                    All systems running
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-green-100 text-sm">Completed Tasks</p>
-                      <p className="text-2xl font-bold">{completedTasks}</p>
-                    </div>
-                    <CheckCircle className="w-8 h-8 text-green-200" />
-                  </div>
-                  <div className="mt-2 text-xs text-green-100">
-                    +{Math.floor(Math.random() * 3) + 1} from yesterday
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-orange-100 text-sm">Pending Tasks</p>
-                      <p className="text-2xl font-bold">{pendingTasks}</p>
-                    </div>
-                    <Clock className="w-8 h-8 text-orange-200" />
-                  </div>
-                  <div className="mt-2 text-xs text-orange-100">
-                    {pendingTasks > 0 ? 'Focus time!' : 'All caught up!'}
-                  </div>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-purple-100 text-sm">Productivity</p>
-                      <p className="text-2xl font-bold">{Math.min(100, 75 + completionRate * 0.25).toFixed(0)}%</p>
-                    </div>
-                    <TrendingUp className="w-8 h-8 text-purple-200" />
-                  </div>
-                  <div className="mt-2 text-xs text-purple-100">
-                    Above average
-                  </div>
-                </div>
-              </div>
-
-              {/* Widgets Grid */}
-              <div className="grid-layout">
-                {visibleWidgets.map((widget, index) => (
-                  <div
-                    key={widget.id}
-                    className={`${getGridSpan(widget.size)} min-h-[400px] animate-fade-in hover:scale-[1.02] transition-transform duration-300`}
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    {getWidgetComponent(widget.type)}
-                  </div>
-                ))}
-              </div>
-
-              {/* Motivational Footer */}
-              <div className="mt-8 text-center p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20">
-                <h3 className="text-lg font-semibold mb-2">Keep up the great work!</h3>
-                <p className="text-muted-foreground">
-                  You're doing amazing. Every small step counts towards your bigger goals.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Individual Widget Views */}
-          {activeSection !== 'dashboard' && (
-            <div className="max-w-4xl mx-auto animate-fade-in">
-              <div className="mb-6">
-                <h2 className="text-3xl font-bold mb-2 capitalize bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {activeSection}
-                </h2>
-                <p className="text-muted-foreground">
-                  Detailed view of your {activeSection} data and insights.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {visibleWidgets
-                  .filter(widget => widget.type === activeSection || activeSection === 'dashboard')
-                  .map((widget, index) => (
-                    <div 
-                      key={widget.id} 
-                      className="min-h-[400px] animate-fade-in hover:scale-[1.02] transition-transform duration-300"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      {getWidgetComponent(widget.type)}
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
+        <main className="flex-1 overflow-auto">
+          {renderContent()}
         </main>
       </div>
     </div>
