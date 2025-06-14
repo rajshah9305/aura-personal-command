@@ -1,16 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { CloudSun, CloudRain, Sun } from 'lucide-react';
+import { CloudSun, CloudRain, Sun, RefreshCw } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const WeatherWidget: React.FC = () => {
   const { weather, setWeather } = useDashboard();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    // Simulate API call with sample data
-    const fetchWeather = async () => {
+  const fetchWeather = async () => {
+    try {
       setLoading(true);
+      setError(null);
       
       // Simulate loading delay
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -34,9 +35,15 @@ export const WeatherWidget: React.FC = () => {
       };
       
       setWeather(sampleWeather);
+    } catch (err) {
+      setError('Failed to load weather data');
+      console.error('Weather fetch error:', err);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
+  useEffect(() => {
     if (!weather) {
       fetchWeather();
     } else {
@@ -55,11 +62,17 @@ export const WeatherWidget: React.FC = () => {
     }
   };
 
+  const handleRefresh = () => {
+    setWeather(null);
+    fetchWeather();
+  };
+
   if (loading) {
     return (
       <div className="widget-card h-full">
         <div className="widget-header">
           <h3 className="font-semibold">Weather</h3>
+          <RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" />
         </div>
         <div className="widget-content">
           <div className="animate-pulse">
@@ -85,13 +98,61 @@ export const WeatherWidget: React.FC = () => {
     );
   }
 
-  if (!weather) return null;
+  if (error) {
+    return (
+      <div className="widget-card h-full">
+        <div className="widget-header">
+          <h3 className="font-semibold">Weather</h3>
+          <button 
+            onClick={handleRefresh}
+            className="p-1 hover:bg-accent rounded transition-colors"
+            title="Retry"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
+        <div className="widget-content flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <button 
+              onClick={handleRefresh}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!weather) {
+    return (
+      <div className="widget-card h-full">
+        <div className="widget-header">
+          <h3 className="font-semibold">Weather</h3>
+        </div>
+        <div className="widget-content flex items-center justify-center">
+          <p className="text-muted-foreground">No weather data available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="widget-card h-full">
       <div className="widget-header">
         <h3 className="font-semibold">Weather</h3>
-        <span className="text-sm text-muted-foreground">{weather.current.location}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">{weather.current.location}</span>
+          <button 
+            onClick={handleRefresh}
+            className="p-1 hover:bg-accent rounded transition-colors"
+            title="Refresh weather"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
       <div className="widget-content">
         {/* Current Weather */}
@@ -105,11 +166,11 @@ export const WeatherWidget: React.FC = () => {
 
         {/* Additional Info */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="text-center">
+          <div className="text-center p-3 bg-muted/50 rounded-lg">
             <div className="text-sm text-muted-foreground">Humidity</div>
             <div className="font-semibold">{weather.current.humidity}%</div>
           </div>
-          <div className="text-center">
+          <div className="text-center p-3 bg-muted/50 rounded-lg">
             <div className="text-sm text-muted-foreground">Wind</div>
             <div className="font-semibold">{weather.current.windSpeed} mph</div>
           </div>
@@ -120,7 +181,7 @@ export const WeatherWidget: React.FC = () => {
           <h4 className="font-medium mb-3">5-Day Forecast</h4>
           <div className="grid grid-cols-5 gap-2">
             {weather.forecast.map((day, index) => (
-              <div key={index} className="text-center">
+              <div key={index} className="text-center p-2 rounded-lg hover:bg-muted/30 transition-colors">
                 <div className="text-xs text-muted-foreground mb-2">
                   {day.date}
                 </div>

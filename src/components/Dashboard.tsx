@@ -21,24 +21,50 @@ import { TrendingUp, CheckCircle, Clock, Activity, Sparkles } from 'lucide-react
 export const Dashboard: React.FC = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [currentMotivationIndex, setCurrentMotivationIndex] = useState(0);
   const { widgets, tasks, userSettings } = useDashboard();
 
-  // Handle navigation events from header
+  const motivationalMessages = [
+    "You're doing amazing! Every small step counts towards your bigger goals.",
+    "Keep up the fantastic work! Your productivity is inspiring.",
+    "Today is full of possibilities. Let's make it count!",
+    "Your dedication is paying off. Stay focused and keep going!",
+    "Progress, not perfection. You're on the right track!",
+    "Success is the sum of small efforts repeated day in and day out.",
+    "Believe in yourself and all that you are capable of achieving.",
+    "Great things never come from comfort zones. Keep pushing forward!"
+  ];
+
+  // Handle navigation events from header and sidebar
   useEffect(() => {
     const handleProfileNavigation = () => setActiveSection('profile');
     const handleSettingsNavigation = () => setActiveSection('settings');
     const handleDashboardNavigation = () => setActiveSection('dashboard');
+    const handleSectionNavigation = (event: CustomEvent) => {
+      setActiveSection(event.detail);
+    };
 
     window.addEventListener('navigate-to-profile', handleProfileNavigation);
     window.addEventListener('navigate-to-settings', handleSettingsNavigation);
     window.addEventListener('navigate-to-dashboard', handleDashboardNavigation);
+    window.addEventListener('navigate-to-section', handleSectionNavigation as EventListener);
 
     return () => {
       window.removeEventListener('navigate-to-profile', handleProfileNavigation);
       window.removeEventListener('navigate-to-settings', handleSettingsNavigation);
       window.removeEventListener('navigate-to-dashboard', handleDashboardNavigation);
+      window.removeEventListener('navigate-to-section', handleSectionNavigation as EventListener);
     };
   }, []);
+
+  // Slower rotation of motivational messages (every 8 seconds instead of random)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentMotivationIndex(prev => (prev + 1) % motivationalMessages.length);
+    }, 8000); // Changed from random to 8 seconds
+
+    return () => clearInterval(interval);
+  }, [motivationalMessages.length]);
 
   const getWidgetComponent = (type: string) => {
     switch (type) {
@@ -94,17 +120,6 @@ export const Dashboard: React.FC = () => {
     if (hour < 12) return 'Good morning';
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
-  };
-
-  const getMotivationalMessage = () => {
-    const messages = [
-      "You're doing amazing! Every small step counts towards your bigger goals.",
-      "Keep up the fantastic work! Your productivity is inspiring.",
-      "Today is full of possibilities. Let's make it count!",
-      "Your dedication is paying off. Stay focused and keep going!",
-      "Progress, not perfection. You're on the right track!"
-    ];
-    return messages[Math.floor(Math.random() * messages.length)];
   };
 
   return (
@@ -225,16 +240,26 @@ export const Dashboard: React.FC = () => {
                 ))}
               </div>
 
-              {/* Motivational Footer */}
+              {/* Enhanced Motivational Footer with slower rotation */}
               <div className="mt-8 text-center p-6 bg-gradient-to-r from-primary/10 to-blue-500/10 rounded-xl border border-primary/20 hover:border-primary/40 transition-all duration-300">
                 <h3 className="text-lg font-semibold mb-2 flex items-center justify-center gap-2">
                   <Sparkles className="w-5 h-5 text-primary" />
                   Keep up the great work!
                   <Sparkles className="w-5 h-5 text-primary" />
                 </h3>
-                <p className="text-muted-foreground">
-                  {getMotivationalMessage()}
+                <p className="text-muted-foreground transition-all duration-1000 ease-in-out">
+                  {motivationalMessages[currentMotivationIndex]}
                 </p>
+                <div className="mt-3 flex justify-center gap-1">
+                  {motivationalMessages.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        index === currentMotivationIndex ? 'bg-primary' : 'bg-muted'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           )}

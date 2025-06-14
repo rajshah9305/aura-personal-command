@@ -78,7 +78,7 @@
 
 @layer utilities {
   .widget-card {
-    @apply bg-card border border-border rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 backdrop-blur-sm hover:border-primary/20;
+    @apply bg-card border border-border rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 backdrop-blur-sm hover:border-primary/20 hover:scale-[1.01];
   }
   
   .widget-header {
@@ -121,6 +121,14 @@
     animation: glow 2s ease-in-out infinite alternate;
   }
 
+  .animate-pulse-slow {
+    animation: pulseSlowly 3s ease-in-out infinite;
+  }
+
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -155,6 +163,22 @@
       transparent
     );
     animation: shimmer 1.5s infinite;
+  }
+
+  .search-highlight {
+    @apply bg-primary/20 rounded px-1 py-0.5 transition-all duration-200;
+  }
+
+  .motivational-text {
+    @apply transition-all duration-1000 ease-in-out transform;
+  }
+
+  .motivational-text.fade-out {
+    @apply opacity-0 translate-y-2;
+  }
+
+  .motivational-text.fade-in {
+    @apply opacity-100 translate-y-0;
   }
 }
 
@@ -207,6 +231,29 @@
   }
   to {
     box-shadow: 0 0 30px hsl(var(--primary) / 0.6);
+  }
+}
+
+@keyframes pulseSlowly {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes wiggle {
+  0%, 7%, 14%, 21% {
+    transform: rotate(0deg);
+  }
+  3.5%, 10.5%, 17.5% {
+    transform: rotate(2deg);
+  }
+  7%, 14%, 21% {
+    transform: rotate(-2deg);
   }
 }
 
@@ -300,4 +347,29 @@
 /* Card hover effects */
 .card-hover {
   @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30;
+}
+
+/* Search dropdown animation */
+.search-dropdown {
+  @apply animate-fade-in;
+}
+
+/* Enhanced button hover effects */
+.enhanced-button {
+  @apply relative overflow-hidden transition-all duration-300 hover:shadow-lg;
+}
+
+.enhanced-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.enhanced-button:hover::before {
+  left: 100%;
 }

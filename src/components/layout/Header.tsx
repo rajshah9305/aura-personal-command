@@ -29,19 +29,57 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ sidebarCollapsed, onToggleSidebar }) => {
   const { darkMode, toggleDarkMode, userSettings } = useDashboard();
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
+  const searchableItems = [
+    'Weather Widget', 'Task Management', 'News Feed', 'Stock Portfolio', 
+    'Calendar Events', 'Analytics Dashboard', 'Profile Settings', 'Dark Mode',
+    'Add Task', 'View Weather', 'Stock Watchlist', 'Today\'s Schedule'
+  ];
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    if (query.trim().length > 0) {
+      const filtered = searchableItems.filter(item =>
+        item.toLowerCase().includes(query.toLowerCase())
+      );
+      setSearchResults(filtered.slice(0, 5));
+      setShowSearchResults(true);
+    } else {
+      setSearchResults([]);
+      setShowSearchResults(false);
+    }
+  };
+
+  const handleSearchItemClick = (item: string) => {
+    console.log('Search result clicked:', item);
+    setSearchQuery('');
+    setShowSearchResults(false);
+    
+    // Navigate based on search item
+    if (item.includes('Weather')) {
+      window.dispatchEvent(new CustomEvent('navigate-to-dashboard'));
+    } else if (item.includes('Task')) {
+      window.dispatchEvent(new CustomEvent('navigate-to-section', { detail: 'tasks' }));
+    } else if (item.includes('Stock')) {
+      window.dispatchEvent(new CustomEvent('navigate-to-section', { detail: 'stocks' }));
+    } else if (item.includes('Profile')) {
+      window.dispatchEvent(new CustomEvent('navigate-to-profile'));
+    } else if (item.includes('Dark Mode')) {
+      toggleDarkMode();
+    }
+  };
 
   const handleProfileClick = () => {
-    // Navigate to profile page - will be handled by the Dashboard component
     window.dispatchEvent(new CustomEvent('navigate-to-profile'));
   };
 
   const handleSettingsClick = () => {
-    // Navigate to settings page - will be handled by the Dashboard component
     window.dispatchEvent(new CustomEvent('navigate-to-settings'));
   };
 
   const handleDashboardClick = () => {
-    // Navigate back to dashboard
     window.dispatchEvent(new CustomEvent('navigate-to-dashboard'));
   };
 
@@ -72,18 +110,36 @@ export const Header: React.FC<HeaderProps> = ({ sidebarCollapsed, onToggleSideba
           </div>
         </div>
 
-        {/* Center section - Search */}
-        <div className="flex-1 max-w-md mx-4">
+        {/* Center section - Enhanced Search */}
+        <div className="flex-1 max-w-md mx-4 relative">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <input
               type="text"
               placeholder="Search widgets, tasks, or commands..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery && setShowSearchResults(true)}
+              onBlur={() => setTimeout(() => setShowSearchResults(false), 200)}
               className="w-full pl-10 pr-4 py-2 bg-background border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-ring transition-all duration-200 hover:border-primary/50"
             />
           </div>
+          
+          {/* Search Results Dropdown */}
+          {showSearchResults && searchResults.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 bg-popover border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              {searchResults.map((item, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSearchItemClick(item)}
+                  className="w-full text-left px-4 py-2 hover:bg-accent transition-colors flex items-center gap-2"
+                >
+                  <Search className="w-4 h-4 text-muted-foreground" />
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right section */}
