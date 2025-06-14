@@ -1,73 +1,215 @@
-# Welcome to your Lovable project
 
-## Project info
+# AI-Powered Personal Dashboard
 
-**URL**: https://lovable.dev/projects/3aa80c46-282e-4b53-95ac-64c834170f66
+A comprehensive, modern personal dashboard application built with React, TypeScript, and Tailwind CSS. This dashboard provides a centralized view of your personal data including weather, tasks, news, stocks, calendar events, and analytics.
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+### Core Dashboard
+- **Modern, responsive design** with dark/light theme toggle
+- **Grid-based layout** with customizable widget positioning
+- **Collapsible sidebar navigation** with smooth animations
+- **Professional header** with search, notifications, and user profile
 
-**Use Lovable**
+### Essential Widgets
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3aa80c46-282e-4b53-95ac-64c834170f66) and start prompting.
+#### 🌤️ Weather Widget
+- Current weather conditions with 5-day forecast
+- Location-based data (ready for geolocation API integration)
+- Weather icons and temperature displays
+- Humidity and wind speed information
 
-Changes made via Lovable will be committed automatically to this repo.
+#### ✅ Task Management
+- Add, edit, and delete tasks with due dates
+- Priority levels (High, Medium, Low) with color coding
+- Progress tracking with completion statistics
+- Local storage persistence
+- Category organization
 
-**Use your preferred IDE**
+#### 📰 News Feed
+- Latest headlines with search and filter functionality
+- Multiple news categories (Technology, Business, Sports, etc.)
+- Article previews with images
+- Time-based sorting
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+#### 📈 Stock Market Tracker
+- Real-time stock price displays (sample data)
+- Watchlist management with add/remove functionality
+- Price change indicators with trending arrows
+- Volume and daily high/low information
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+#### 📅 Calendar Integration
+- Monthly, weekly, and daily view options
+- Event creation and management interface
+- Upcoming events preview
+- Color-coded event categories
 
-Follow these steps:
+#### 📊 Analytics Dashboard
+- Personal productivity metrics
+- Task completion rates and trends
+- Priority distribution charts
+- Weekly progress reports
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Technical Features
+- **State Management**: Context API for global state
+- **Local Storage**: Persistent user preferences and data
+- **Responsive Design**: Mobile-first approach
+- **Loading States**: Skeleton screens and smooth transitions
+- **Error Handling**: Graceful error management
+- **TypeScript**: Full type safety throughout the application
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## 🛠️ Installation & Setup
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Clone the repository**
+   ```bash
+   git clone <your-repository-url>
+   cd ai-personal-dashboard
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   Navigate to `http://localhost:8080` to view the dashboard.
+
+## 🔧 API Configuration
+
+The dashboard is currently running with sample data. To connect real APIs:
+
+### Weather API (OpenWeatherMap)
+1. Sign up at [OpenWeatherMap](https://openweathermap.org/api)
+2. Get your API key
+3. Update the weather fetching logic in `WeatherWidget.tsx`
+
+### News API
+1. Register at [NewsAPI](https://newsapi.org/)
+2. Obtain your API key
+3. Modify the news fetching in `NewsWidget.tsx`
+
+### Stock Market API (Alpha Vantage)
+1. Get a free API key from [Alpha Vantage](https://www.alphavantage.co/)
+2. Update the stock data fetching in `StockWidget.tsx`
+
+### Example API Integration
+
+```typescript
+// Example weather API integration
+const fetchWeatherData = async (apiKey: string, location: string) => {
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}&units=metric`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Weather API error:', error);
+  }
+};
 ```
 
-**Edit a file directly in GitHub**
+## 🎨 Customization
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Theme Customization
+The dashboard supports both light and dark themes. Customize colors in `src/index.css`:
 
-**Use GitHub Codespaces**
+```css
+:root {
+  --primary: 221.2 83.2% 53.3%;
+  --background: 0 0% 100%;
+  /* Add your custom colors */
+}
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Widget Configuration
+Widgets can be customized in the `DashboardContext.tsx`:
 
-## What technologies are used for this project?
+```typescript
+const defaultWidgets = [
+  {
+    id: 'weather',
+    name: 'Weather',
+    type: 'weather',
+    position: { x: 0, y: 0 },
+    size: { width: 2, height: 1 },
+    visible: true
+  },
+  // Add or modify widgets
+];
+```
 
-This project is built with:
+## 📱 Mobile Responsiveness
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The dashboard is fully responsive with:
+- Collapsible sidebar on mobile devices
+- Adaptive grid layouts
+- Touch-friendly interface elements
+- Optimized typography and spacing
 
-## How can I deploy this project?
+## 🚀 Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/3aa80c46-282e-4b53-95ac-64c834170f66) and click on Share -> Publish.
+### Build for Production
+```bash
+npm run build
+```
 
-## Can I connect a custom domain to my Lovable project?
+### Deploy to Vercel
+```bash
+npm install -g vercel
+vercel
+```
 
-Yes, you can!
+### Deploy to Netlify
+1. Build the project: `npm run build`
+2. Upload the `dist` folder to Netlify
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔮 Future Enhancements
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Planned Features
+- [ ] Drag-and-drop widget reorganization
+- [ ] Custom widget creation
+- [ ] Data export functionality (PDF/CSV)
+- [ ] Real-time notifications
+- [ ] Integration with Google Calendar
+- [ ] Advanced analytics with charts
+- [ ] User account management
+- [ ] Widget marketplace
+
+### Performance Optimizations
+- [ ] Virtual scrolling for large datasets
+- [ ] Image lazy loading
+- [ ] Service worker for offline functionality
+- [ ] Progressive Web App (PWA) features
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Commit your changes: `git commit -m 'Add new feature'`
+4. Push to the branch: `git push origin feature/new-feature`
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Tailwind CSS** for the utility-first CSS framework
+- **Lucide React** for the beautiful icon set
+- **React Query** for data fetching capabilities
+- **Shadcn/ui** for the component library foundation
+
+## 📞 Support
+
+For support, email support@example.com or create an issue on GitHub.
+
+---
+
+**Made with ❤️ using React, TypeScript, and Tailwind CSS**
