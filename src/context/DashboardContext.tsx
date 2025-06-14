@@ -101,7 +101,7 @@ interface DashboardContextType {
     location: string;
     notifications: boolean;
   };
-  updateUserSettings: (settings: Partial<typeof userSettings>) => void;
+  updateUserSettings: (settings: Partial<DashboardContextType['userSettings']>) => void;
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -231,7 +231,7 @@ export const DashboardProvider: React.FC<DashboardProviderProps> = ({ children }
     setStockData(prev => ({ ...prev, [symbol]: data }));
   };
 
-  const updateUserSettings = (settings: Partial<typeof userSettings>) => {
+  const updateUserSettings = (settings: Partial<DashboardContextType['userSettings']>) => {
     setUserSettings(prev => ({ ...prev, ...settings }));
   };
 
